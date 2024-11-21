@@ -13,7 +13,7 @@ const JobPosting = () => {
   const [skills, setSkills] = useState(['React', 'TypeScript']);
   const [newSkill, setNewSkill] = useState('');
 
-  const handleAddSkill = (e) => {
+  const handleAddSkill = (e: React.FormEvent) => {
     e.preventDefault();
     if (newSkill.trim()) {
       setSkills([...skills, newSkill.trim()]);
@@ -21,7 +21,7 @@ const JobPosting = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1500);
@@ -129,7 +129,7 @@ const JobPosting = () => {
                   </label>
                   <textarea
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="4"
+                    rows={4}
                     placeholder="Describe the role and responsibilities..."
                   />
                 </div>
