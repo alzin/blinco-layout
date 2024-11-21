@@ -1,72 +1,89 @@
 "use client";
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Check, X, CreditCard, Star, Clock, ArrowRight,
-  Users, Zap, Shield, Crown, ChevronLeft, Loader2,
-  Calendar
-} from 'lucide-react';
+import {
+  Check,
+  X,
+  CreditCard,
+  Star,
+  Clock,
+  ArrowRight,
+  Users,
+  Zap,
+  Shield,
+  Crown,
+  ChevronLeft,
+  Loader2,
+  Calendar,
+} from "lucide-react";
+
+type Plan = {
+  name: string;
+  price: { monthly: number; yearly: number };
+  features: string[];
+  popular?: boolean;
+  limitations?: string[];
+};
+
+type PlanKey = "free" | "pro" | "enterprise";
+
+const plans: Record<PlanKey, Plan> = {
+  free: {
+    name: "Free",
+    price: { monthly: 0, yearly: 0 },
+    features: [
+      "View 3 matches per job",
+      "Basic profile creation",
+      "Standard support",
+    ],
+    limitations: [
+      "Limited match visibility",
+      "No direct contact",
+      "Basic analytics",
+    ],
+  },
+  pro: {
+    name: "Professional",
+    price: { monthly: 29, yearly: 290 },
+    features: [
+      "View all matches",
+      "Direct candidate contact",
+      "Advanced analytics",
+      "Priority support",
+      "Custom job alerts",
+      "Profile highlighting",
+    ],
+    popular: true,
+  },
+  enterprise: {
+    name: "Enterprise",
+    price: { monthly: 99, yearly: 990 },
+    features: [
+      "All Professional features",
+      "Dedicated account manager",
+      "Custom API access",
+      "Team collaboration",
+      "Advanced reporting",
+      "White-label options",
+    ],
+  },
+};
 
 const SubscriptionInterface = () => {
-  const [billingCycle, setBillingCycle] = useState('yearly'); // yearly or monthly
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const plans = {
-    free: {
-      name: 'Free',
-      price: {
-        monthly: 0,
-        yearly: 0
-      },
-      features: [
-        'View 3 matches per job',
-        'Basic profile creation',
-        'Standard support'
-      ],
-      limitations: [
-        'Limited match visibility',
-        'No direct contact',
-        'Basic analytics'
-      ]
-    },
-    pro: {
-      name: 'Professional',
-      price: {
-        monthly: 29,
-        yearly: 290
-      },
-      features: [
-        'View all matches',
-        'Direct candidate contact',
-        'Advanced analytics',
-        'Priority support',
-        'Custom job alerts',
-        'Profile highlighting'
-      ],
-      popular: true
-    },
-    enterprise: {
-      name: 'Enterprise',
-      price: {
-        monthly: 99,
-        yearly: 990
-      },
-      features: [
-        'All Professional features',
-        'Dedicated account manager',
-        'Custom API access',
-        'Team collaboration',
-        'Advanced reporting',
-        'White-label options'
-      ]
-    }
-  };
-
-  const handlePlanSelection = (plan) => {
+  const handlePlanSelection = (plan: PlanKey) => {
     setSelectedPlan(plan);
     setShowPayment(true);
   };
@@ -86,21 +103,21 @@ const SubscriptionInterface = () => {
             <div className="inline-flex items-center bg-gray-100 rounded-lg p-1 mb-8">
               <button
                 className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                  billingCycle === 'monthly' 
-                    ? 'bg-white shadow text-gray-900' 
-                    : 'text-gray-600'
+                  billingCycle === "monthly"
+                    ? "bg-white shadow text-gray-900"
+                    : "text-gray-600"
                 }`}
-                onClick={() => setBillingCycle('monthly')}
+                onClick={() => setBillingCycle("monthly")}
               >
                 Monthly
               </button>
               <button
                 className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                  billingCycle === 'yearly' 
-                    ? 'bg-white shadow text-gray-900' 
-                    : 'text-gray-600'
+                  billingCycle === "yearly"
+                    ? "bg-white shadow text-gray-900"
+                    : "text-gray-600"
                 }`}
-                onClick={() => setBillingCycle('yearly')}
+                onClick={() => setBillingCycle("yearly")}
               >
                 Yearly
                 <span className="ml-2 text-xs text-green-600 font-normal">
@@ -113,10 +130,10 @@ const SubscriptionInterface = () => {
           {/* Plans Grid */}
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {Object.entries(plans).map(([key, plan]) => (
-              <Card 
+              <Card
                 key={key}
                 className={`relative ${
-                  plan.popular ? 'border-blue-500 shadow-lg' : ''
+                  plan.popular ? "border-blue-500 shadow-lg" : ""
                 }`}
               >
                 {plan.popular && (
@@ -131,9 +148,9 @@ const SubscriptionInterface = () => {
                   <div className="text-center mb-6">
                     <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
                     <div className="text-4xl font-bold mb-2">
-                      ${plans[key].price[billingCycle]}
+                      ${plan.price[billingCycle]}
                       <span className="text-base font-normal text-gray-600">
-                        /{billingCycle === 'yearly' ? 'year' : 'month'}
+                        /{billingCycle === "yearly" ? "year" : "month"}
                       </span>
                     </div>
                   </div>
@@ -146,72 +163,39 @@ const SubscriptionInterface = () => {
                       </div>
                     ))}
                     {plan.limitations?.map((limitation, index) => (
-                      <div key={index} className="flex items-center text-gray-400">
+                      <div
+                        key={index}
+                        className="flex items-center text-gray-400"
+                      >
                         <X className="h-5 w-5 mr-3 flex-shrink-0" />
                         <span>{limitation}</span>
                       </div>
                     ))}
                   </div>
 
-                  <Button 
+                  <Button
                     className={`w-full ${
-                      key === 'free' 
-                        ? 'bg-gray-500 hover:bg-gray-600' 
+                      key === "free"
+                        ? "bg-gray-500 hover:bg-gray-600"
                         : plan.popular
-                          ? 'bg-blue-500 hover:bg-blue-600'
-                          : ''
+                        ? "bg-blue-500 hover:bg-blue-600"
+                        : ""
                     }`}
-                    onClick={() => handlePlanSelection(key)}
+                    onClick={() => handlePlanSelection(key as PlanKey)}
                   >
-                    {key === 'free' ? 'Current Plan' : 'Get Started'}
+                    {key === "free" ? "Current Plan" : "Get Started"}
                   </Button>
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          {/* Features Comparison */}
-          <div className="max-w-4xl mx-auto mt-16">
-            <h3 className="text-2xl font-bold text-center mb-8">
-              All Plans Include
-            </h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-                  <Zap className="h-6 w-6 text-blue-600" />
-                </div>
-                <h4 className="font-semibold mb-2">AI-Powered Matching</h4>
-                <p className="text-gray-600 text-sm">
-                  Smart algorithms to find the perfect candidates
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-6 w-6 text-purple-600" />
-                </div>
-                <h4 className="font-semibold mb-2">Secure Platform</h4>
-                <p className="text-gray-600 text-sm">
-                  Enterprise-grade security and privacy
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-6 w-6 text-green-600" />
-                </div>
-                <h4 className="font-semibold mb-2">Growing Network</h4>
-                <p className="text-gray-600 text-sm">
-                  Access to thousands of candidates and companies
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       ) : (
         /* Payment Form */
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-lg mx-auto">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="mb-6"
               onClick={() => setShowPayment(false)}
             >
@@ -221,24 +205,29 @@ const SubscriptionInterface = () => {
 
             <Card>
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold">
-                      {plans[selectedPlan].name}
-                    </h2>
-                    <p className="text-gray-600">
-                      {billingCycle === 'yearly' ? 'Annual' : 'Monthly'} subscription
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      ${plans[selectedPlan].price[billingCycle]}
+                {selectedPlan && (
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold">
+                        {plans[selectedPlan].name}
+                      </h2>
+                      <p className="text-gray-600">
+                        {billingCycle === "yearly"
+                          ? "Annual"
+                          : "Monthly"}{" "}
+                        subscription
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      /{billingCycle === 'yearly' ? 'year' : 'month'}
-                    </p>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold">
+                        ${plans[selectedPlan].price[billingCycle]}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        /{billingCycle === "yearly" ? "year" : "month"}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <form className="space-y-4">
                   <div>
@@ -275,7 +264,7 @@ const SubscriptionInterface = () => {
                     />
                   </div>
 
-                  <Button 
+                  <Button
                     className="w-full bg-blue-500 hover:bg-blue-600"
                     disabled={isLoading}
                   >
